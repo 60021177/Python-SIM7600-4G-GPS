@@ -42,27 +42,28 @@ def send_at(command, back, timeout):
             # GPS NMEA format
             print('Cleaned : ',Cleaned)
 
-            x = Cleaned.split(' ')
-            y = x[1].split(',')
+            if command == 'AT+CGPSINFO' :
+                x = Cleaned.split(' ')
+                y = x[0].split(',')
 
-            # GPS is 0.0 until it gets the position.
-            if y[0] == '' or command == 'AT+CGPS=1,1' :
-                lat = 0.0
-                lng = 0.0
-            else:
-                a = y[0][0:2]  # lat
-                b = y[2][0:3]  # long
-                c = y[0][2:]  # small lat
-                d = y[2][3:]  # small long
-                nos = y[1]
-                eow = y[3]
+                # GPS is 0.0 until it gets the position.
+                if y[0] == '' :
+                    lat = 0.0
+                    lng = 0.0
+                else:
+                    a = y[0][0:2]  # lat
+                    b = y[2][0:3]  # long
+                    c = y[0][2:]  # small lat
+                    d = y[2][3:]  # small long
+                    nos = y[1]
+                    eow = y[3]
 
-                lat = float(a) + (float(c)/60)
-                lng = float(b) + (float(d)/60)
-                if nos == 'S':
-                    lat = -lat
-                if eow == 'W':
-                    lng = -lng
+                    lat = float(a) + (float(c)/60)
+                    lng = float(b) + (float(d)/60)
+                    if nos == 'S':
+                        lat = -lat
+                    if eow == 'W':
+                        lng = -lng
 
             dicts = dict()
 
@@ -73,7 +74,7 @@ def send_at(command, back, timeout):
                 dicts['lat'] = float("{:.5f}".format(lat))
                 dicts['long'] = float("{:.5f}".format(lng))
                 
-            print('Latitude : '+dicts['lat']+'\nLongitude : '+dicts['long'])
+            print('Latitude : '+str(dicts['lat'])+'\nLongitude : '+str(dicts['long']))
 
             return 1
     else:
